@@ -1,6 +1,6 @@
 use std::fs;
 use std::fs::File;
-use chrono::{Local};
+use chrono::Local;
 use tempdir::TempDir;
 use unicode_normalizer::renamer::*;
 
@@ -11,10 +11,10 @@ fn test_normalize() {
     let nfkc = String::from("\u{00c5}");
     let nfkd = String::from("A\u{030a}");
     println!("{:#} {:#} {:#} {:#}", nfc, nfd, nfkc, nfkd);
-    assert_eq!(normalize(&String::from("NFD"), nfc.clone()), nfd.clone());
-    assert_eq!(normalize(&String::from("NFC"), nfd.clone()), nfc.clone());
-    assert_eq!(normalize(&String::from("NFKD"), nfkc.clone()), nfkd.clone());
-    assert_eq!(normalize(&String::from("NFKC"), nfkd.clone()), nfkc.clone());
+    assert_eq!(normalize(&NormalForm::from("NFD"), nfc.clone()), nfd.clone());
+    assert_eq!(normalize(&NormalForm::from("NFC"), nfd.clone()), nfc.clone());
+    assert_eq!(normalize(&NormalForm::from("NFKD"), nfkc.clone()), nfkd.clone());
+    assert_eq!(normalize(&NormalForm::from("NFKC"), nfkd.clone()), nfkc.clone());
 }
 
 #[test]
@@ -42,11 +42,11 @@ fn test_rename_one() {
 
     let expected1 = format!("[{}]\t{} -> {}", today,
         fs_root.join("a/aa").join(&nfd).as_path().display(),
-        fs_root.join("a/aa").join(&normalize(&form, nfd.clone())).as_path().display(),
+        fs_root.join("a/aa").join(&normalize(&NormalForm::from(&form), nfd.clone())).as_path().display(),
     );
     let expected2 = format!("[{}]\t{} -> {}", today,
         fs_root.join("b").join(&nfd).as_path().display(),
-        fs_root.join("b").join(&normalize(&form, nfd.clone())).as_path().display(),
+        fs_root.join("b").join(&normalize(&NormalForm::from(&form), nfd.clone())).as_path().display(),
     );
     let out_a = format!("{}\n{}\n", expected1, expected2);
     let out_b = fs::read_to_string(&log_file).unwrap();

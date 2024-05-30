@@ -1,7 +1,7 @@
 use crate::renamer::{rename_one, FORMS};
 use std::fs;
 use clap::Parser;
-use chrono::{Local};
+use chrono::Local;
 
 
 #[derive(Parser, Debug)]
@@ -32,7 +32,7 @@ pub fn run_rename() {
     let mut fd = fs::File::options().write(true).create(true).append(true).open(&args.log).unwrap();
     let today = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
     for p in &args.path {
-        rename_one(&p, &mut fd, &args.to_form, args.dry_run, &today);
+        rename_one(p, &mut fd, &args.to_form, args.dry_run, &today);
     }
     fd.sync_all().unwrap();
 }
