@@ -1,11 +1,12 @@
 use std::fs;
 use std::io::Write;
 use walkdir;
+use clap::ValueEnum;
 
 use unicode_normalization::UnicodeNormalization;
 
-pub const FORMS:[&str; 4] = ["NFC", "NFD", "NFKC", "NFKD"];
 
+#[derive(Debug, Clone, ValueEnum)]
 pub enum NormalForm {
     NFC,
     NFD,
@@ -14,16 +15,6 @@ pub enum NormalForm {
 }
 
 impl NormalForm {
-    pub fn from(name: &str) -> Self {
-        match name {
-            "NFC" => Self::NFC,
-            "NFD" => Self::NFD,
-            "NFKC" => Self::NFKC,
-            "NFKD" => Self::NFKD,
-            _ => panic!("Wrong form `{}`", name),
-        }
-    }
-
     fn matched(&self, s: &str) -> bool {
         match *self {
             Self::NFC => unicode_normalization::is_nfc(&s),
@@ -50,8 +41,7 @@ pub fn normalize(form: &NormalForm, s: String) -> String {
     }
 }
 
-pub fn rename_one(path: &String, log_fd: &mut fs::File, form: &String, dry_run: bool, today: &String) {
-    let form = NormalForm::from(form);
+pub fn rename_one(path: &String, log_fd: &mut fs::File, form: &NormalForm, dry_run: bool, today: &String) {
     for entry in walkdir::WalkDir::new(path).contents_first(true) {
         let entry = match entry {
             Ok(i) => i,
