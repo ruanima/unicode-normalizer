@@ -32,14 +32,15 @@ impl NormalForm {
             Self::NFKD => s.nfkd().collect::<String>(),
         }
     }
-}
 
-pub fn normalize(form: &NormalForm, s: String) -> String {
-    match form.matched(&s) {
-        true => s,
-        false => form.convert(&s)
+    pub fn normalize(&self, s: String) -> String {
+        match self.matched(&s) {
+            true => s,
+            false => self.convert(&s)
+        }
     }
 }
+
 
 pub fn rename_one(path: &String, log_fd: &mut fs::File, form: &NormalForm, dry_run: bool, today: &String) {
     for entry in walkdir::WalkDir::new(path).contents_first(true) {
@@ -53,7 +54,7 @@ pub fn rename_one(path: &String, log_fd: &mut fs::File, form: &NormalForm, dry_r
         }; entry.file_name();
 
         let src = entry.path();
-        let new_filename = normalize(&form, filename.clone());
+        let new_filename = form.normalize(filename.clone());
         if filename == new_filename {
             continue;
         }

@@ -11,10 +11,10 @@ fn test_normalize() {
     let nfkc = String::from("\u{00c5}");
     let nfkd = String::from("A\u{030a}");
     println!("{:#} {:#} {:#} {:#}", nfc, nfd, nfkc, nfkd);
-    assert_eq!(normalize(&NormalForm::NFD, nfc.clone()), nfd.clone());
-    assert_eq!(normalize(&NormalForm::NFC, nfd.clone()), nfc.clone());
-    assert_eq!(normalize(&NormalForm::NFKD, nfkc.clone()), nfkd.clone());
-    assert_eq!(normalize(&NormalForm::NFKC, nfkd.clone()), nfkc.clone());
+    assert_eq!(NormalForm::NFD.normalize(nfc.clone()), nfd.clone());
+    assert_eq!(NormalForm::NFC.normalize(nfd.clone()), nfc.clone());
+    assert_eq!(NormalForm::NFKD.normalize(nfkc.clone()), nfkd.clone());
+    assert_eq!(NormalForm::NFKC.normalize(nfkd.clone()), nfkc.clone());
 }
 
 #[test]
@@ -42,11 +42,11 @@ fn test_rename_one() {
 
     let expected1 = format!("[{}]\t{} -> {}", today,
         fs_root.join("a/aa").join(&nfd).as_path().display(),
-        fs_root.join("a/aa").join(&normalize(&form, nfd.clone())).as_path().display(),
+        fs_root.join("a/aa").join(&form.normalize(nfd.clone())).as_path().display(),
     );
     let expected2 = format!("[{}]\t{} -> {}", today,
         fs_root.join("b").join(&nfd).as_path().display(),
-        fs_root.join("b").join(&normalize(&form, nfd.clone())).as_path().display(),
+        fs_root.join("b").join(&form.normalize(nfd.clone())).as_path().display(),
     );
     let out_a = format!("{}\n{}\n", expected1, expected2);
     let out_b = fs::read_to_string(&log_file).unwrap();
